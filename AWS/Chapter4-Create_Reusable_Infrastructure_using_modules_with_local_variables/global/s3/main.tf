@@ -9,11 +9,11 @@ terraform {
   #backend config
   /* before add backend config we need to create s3 bucket and dynamodb table. Comment this backend block before you going to create s3 bucket and dynamo DB table*/
   # backend "s3" {
-  #   bucket = "terraform-up-and-running-state-rc-22may2025" #name of the bucket. Name can not be used as variable
+  #   bucket = "terraform-up-and-running-state-rc-29july2025" #name of the bucket. Name can not be used as variable
   #   key    = "global/s3/terraform.tfstate"                 #Make sure to change this key value to match the current file path to get 1:1 mapping between state file and file path
   #   region = "ap-south-1"
 
-  #   dynamodb_table = "terraform-up-and-running-locks"
+  #   #dynamodb_table = "terraform-up-and-running-locks"
   # }
 }
 
@@ -23,7 +23,7 @@ provider "aws" {
 
 #aws s3 bucket
 resource "aws_s3_bucket" "terraform_state_bucket" {
-  bucket        = "terraform-up-and-running-state-rc-22may2025"
+  bucket        = "terraform-up-and-running-state-rc-29july2025"
   force_destroy = true
 
   tags = {
@@ -31,9 +31,9 @@ resource "aws_s3_bucket" "terraform_state_bucket" {
   }
   #Comment this before delete the s3 bucket
   #prevent assidential deletion
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
 #enable versioning
@@ -66,13 +66,13 @@ resource "aws_s3_bucket_public_access_block" "terraform_state_bucket_public_acce
 }
 
 #AWS dynamodb for state locking
-resource "aws_dynamodb_table" "terraform_state_dynamodb_table" {
-  name         = "terraform-up-and-running-locks"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "LockID"
+# resource "aws_dynamodb_table" "terraform_state_dynamodb_table" {
+#   name         = "terraform-up-and-running-locks"
+#   billing_mode = "PAY_PER_REQUEST"
+#   hash_key     = "LockID"
 
-  attribute {
-    name = "LockID"
-    type = "S"
-  }
-}
+#   attribute {
+#     name = "LockID"
+#     type = "S"
+#   }
+# }
