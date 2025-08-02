@@ -36,32 +36,7 @@ terraform {
     }
   }
 }
-  ##Need to remove from module
-  #backend config
-  /* before add backend config we need to create s3 bucket and dynamodb table. Comment this backend block before you going to create s3 bucket and dynamo DB table*/
-#   backend "s3" {
-#     bucket = "terraform-up-and-running-state-rc-25mar2025"        #name of the bucket
-#     key    = "stage/services/webserver-cluster/terraform.tfstate" #Make sure to change this key value to match the current file path to get 1:1 mapping between state file and file path
-#     region = "ap-south-1"
 
-#     dynamodb_table = "terraform-up-and-running-locks"
-#   }
-# }
-##Need to remove from module
-# provider "aws" {
-#   region = "ap-south-1"
-# }
-
-#--------------------------------terraform remote state data sources start-----------------------------------
-data "terraform_remote_state" "mysql_rds_db_datasource" {
-  backend = "s3"
-  config = {
-    bucket = var.mysql_db_remote_state_bucket
-    key    = var.mysql_db_remote_state_key
-    region = "ap-south-1"
-  }
-}
-#--------------------------------data sources end-------------------------------------
 
 #---------------------------------define lacal variables start-------------------------------------
 
@@ -83,9 +58,11 @@ resource "aws_launch_template" "web-server-launch-template" {
   instance_type        = var.launch_template_instance_type
   security_group_names = [aws_security_group.ec2_instance_sg.name]
   user_data = base64encode(templatefile("${path.module}/script.tftpl", {
-    server_port = var.server_port,
-    db_address  = data.terraform_remote_state.mysql_rds_db_datasource.outputs.address,
-    db_port     = data.terraform_remote_state.mysql_rds_db_datasource.outputs.port
+    server_port = local.server_port,
+    # db_address  = data.terraform_remote_state.mysql_rds_db_datasource.outputs.address,
+    # db_port     = data.terraform_remote_state.mysql_rds_db_datasource.outputs.port
+    db_address  = var.mysql_db_address_variable,
+    db_port     = var.mysql_db_port_variable
   }))
   key_name = "aws_key_mumbai_region"
 
@@ -142,7 +119,7 @@ resource "aws_lb_listener" "http-ls" {
 
 #define lb_target group for asg
 resource "aws_lb_target_group" "target_group" {
-  name     = "${var.web_server_cluster_name}-terraform-asg-targetgroup"
+  name     = "${var.web_server_cluster_name}-tf-asg-tg"
   port     = local.server_port
   protocol = "HTTP"
   vpc_id   = data.aws_vpc.default.id

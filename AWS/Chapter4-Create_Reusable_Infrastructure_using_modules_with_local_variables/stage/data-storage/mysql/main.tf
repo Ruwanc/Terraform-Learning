@@ -8,12 +8,12 @@ terraform {
   #backend config
   /* before add backend config we need to create s3 bucket and dynamodb table. Comment this backend block before you going to create s3 bucket and dynamo DB table*/
   backend "s3" {
-    bucket = "terraform-up-and-running-state-rc-25mar2025" #name of the bucket
-    key    = "stage/data-storage/mysql/terraform.tfstate"  #Make sure to change this key value to match the current file path to get 1:1 mapping between state file and file path
+    bucket = "terraform-up-and-running-state-rc-29july2025" #name of the bucket
+    key    = "stage/data-storage/mysql/terraform.tfstate"   #Make sure to change this key value to match the current file path to get 1:1 mapping between state file and file path
     region = "ap-south-1"
 
-    dynamodb_table = "terraform-up-and-running-locks"
-    encrypt        = true
+    #dynamodb_table = "terraform-up-and-running-locks"
+    encrypt = true
   }
 }
 

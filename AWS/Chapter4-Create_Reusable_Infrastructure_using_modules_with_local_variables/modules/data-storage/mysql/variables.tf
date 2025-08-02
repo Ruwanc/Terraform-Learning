@@ -1,12 +1,12 @@
 variable "mysql_db_name"{
-    description = "The name of myswl database"
+    description = "The name of mysql database"
     type        = string
 }
 
 variable "mysql_rds_instance_type"{
     description = "The instance type of mysql rds"
     type        = string
-    #default     = "db.t3.micro"
+    default     = "db.t3.micro"
 }
 
 #---db credentials---

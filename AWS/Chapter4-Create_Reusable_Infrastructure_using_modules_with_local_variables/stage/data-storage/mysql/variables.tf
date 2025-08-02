@@ -14,3 +14,9 @@ variable "mysql_rds_db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "mysql_db_name" {
+  description = "The name of mysql database"
+  type        = string
+  default     = "test_db"
+}
